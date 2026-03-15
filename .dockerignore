@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+build
+coverage
+dev.db
+prisma/dev.db
+public/uploads
+*.log
+tmp_test.txt
+tsconfig.tsbuildinfo

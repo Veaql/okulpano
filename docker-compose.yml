@@ -1,0 +1,20 @@
+services:
+  okulpano:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: okulpano
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:./data/okulpano.db"
+      UPLOAD_MAX_IMAGE_MB: "10"
+      UPLOAD_MAX_VIDEO_MB: "50"
+    volumes:
+      - okulpano_data:/app/data
+      - okulpano_uploads:/app/public/uploads
+
+volumes:
+  okulpano_data:
+  okulpano_uploads:

@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model School {
+  id        String   @id @default(uuid())
+  name      String
+  shortName String?  @map("short_name")
+  logoUrl   String?  @map("logo_url")
+  city      String?
+  district  String?
+  slogan    String?
+  timezone  String   @default("Europe/Istanbul")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  settings        Settings?
+  dutyLocations   DutyLocation[]
+  dutyAssignments DutyAssignment[]
+  scheduleBlocks  ScheduleBlock[]
+  announcements   Announcement[]
+  mediaItems      MediaItem[]
+  tickerMessages  TickerMessage[]
+
+  @@map("schools")
+}
+
+model Settings {
+  id              String   @id @default(uuid())
+  schoolId        String   @unique @map("school_id")
+  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  theme           String   @default("modern")
+  primaryColor    String   @default("#1e3a5f") @map("primary_color")
+  accentColor     String   @default("#f59e0b") @map("accent_color")
+  cardRadius      String   @default("12") @map("card_radius")
+  fontScale       String   @default("100") @map("font_scale")
+  dateFormat      String   @default("DD MMMM YYYY - dddd") @map("date_format")
+  timeFormat      String   @default("HH:mm") @map("time_format")
+  showSeconds     Boolean  @default(false) @map("show_seconds")
+  scheduleType    String   @default("normal") @map("schedule_type")
+  activeWidget    String   @default("disabled") @map("active_widget")
+  widgetPosition  String   @default("right") @map("widget_position")
+  examName        String?  @map("exam_name")
+  examDate        DateTime? @map("exam_date")
+  trtCategory     String   @default("gundem") @map("trt_category")
+  showTrtNews     Boolean  @default(true) @map("show_trt_news")
+  showWeather     Boolean  @default(true) @map("show_weather")
+  showWidget      Boolean  @default(true) @map("show_widget")
+  weatherCityCode String   @default("34") @map("weather_city_code")
+  weatherStation  String?  @map("weather_station")
+  weatherLabel    String?  @map("weather_label")
+  refreshInterval Int      @default(15) @map("refresh_interval")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+model DutyLocation {
+  id        String   @id @default(uuid())
+  schoolId  String   @map("school_id")
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name      String
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  assignments DutyAssignment[]
+
+  @@map("duty_locations")
+}
+
+model DutyAssignment {
+  id             String       @id @default(uuid())
+  schoolId       String       @map("school_id")
+  school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  weekday        Int
+  dutyLocationId String       @map("duty_location_id")
+  dutyLocation   DutyLocation @relation(fields: [dutyLocationId], references: [id], onDelete: Cascade)
+  personName     String       @map("person_name")
+  note           String?
+  sortOrder      Int          @default(0) @map("sort_order")
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  @@map("duty_assignments")
+}
+
+model ScheduleBlock {
+  id        String   @id @default(uuid())
+  schoolId  String   @map("school_id")
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  dayType   String   @default("weekday") @map("day_type")
+  blockType String   @map("block_type")
+  label     String
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("schedule_blocks")
+}
+
+model Announcement {
+  id        String    @id @default(uuid())
+  schoolId  String    @map("school_id")
+  school    School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  title     String
+  content   String?
+  priority  String    @default("normal")
+  startsAt  DateTime? @map("starts_at")
+  endsAt    DateTime? @map("ends_at")
+  isActive  Boolean   @default(true) @map("is_active")
+  sortOrder Int       @default(0) @map("sort_order")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("announcements")
+}
+
+model MediaItem {
+  id              String   @id @default(uuid())
+  schoolId        String   @map("school_id")
+  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  type            String
+  fileUrl         String   @map("file_url")
+  title           String?
+  subtitle        String?
+  durationSeconds Int      @default(5) @map("duration_seconds")
+  isActive        Boolean  @default(true) @map("is_active")
+  sortOrder       Int      @default(0) @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("media_items")
+}
+
+model TickerMessage {
+  id              String   @id @default(uuid())
+  schoolId        String   @map("school_id")
+  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  text            String
+  speed           Int      @default(50)
+  textColor       String   @default("#ffffff") @map("text_color")
+  backgroundColor String   @default("#dc2626") @map("background_color")
+  isEmergency     Boolean  @default(false) @map("is_emergency")
+  isActive        Boolean  @default(true) @map("is_active")
+  sortOrder       Int      @default(0) @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("ticker_messages")
+}
+

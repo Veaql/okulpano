@@ -1,0 +1,130 @@
+﻿@import "tailwindcss";
+
+@theme {
+  --font-sans: "Segoe UI", "Tahoma", "Arial", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ===== ADMIN SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+/* ===== ADMIN CARD ===== */
+.admin-card { transition: all 0.2s ease; }
+.admin-card:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); }
+
+/* ========================================= */
+/*  DISPLAY ENGINE - PREMIUM CORPORATE CSS   */
+/* ========================================= */
+
+.display-root {
+  font-size: var(--font-scale, 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== MEDIA CROSSFADE ===== */
+@keyframes media-fade-scale {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-media-enter {
+  animation: media-fade-scale var(--motion-media-fade, 900ms) var(--motion-easing-fade, cubic-bezier(0, 0, 0.2, 1)) forwards;
+}
+
+/* ===== DUTY SINGLE-LINE VERTICAL ROTATION ===== */
+@keyframes panel-sync-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-panel-sync {
+  animation: panel-sync-rise 1200ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+/* ===== PANEL CONTENT FADE ===== */
+@keyframes panel-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-panel-fade {
+  animation: panel-fade var(--motion-panel-swap, 500ms) var(--motion-easing-fade, cubic-bezier(0, 0, 0.2, 1)) forwards;
+}
+
+/* ===== TICKER - SOFT CORPORATE ===== */
+@keyframes ticker-scroll {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-animate {
+  animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
+  will-change: transform;
+}
+
+/* ===== CONNECTION STATUS ===== */
+@keyframes status-breathe {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.25; }
+}
+.status-disconnected {
+  animation: status-breathe 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ===== SCHEDULE STATUS INDICATOR ===== */
+@keyframes status-glow {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+  50% { box-shadow: 0 0 0 4px currentColor; opacity: 0.3; }
+}
+.schedule-status-dot {
+  animation: status-glow 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ===== TYPOGRAPHY (DISPLAY-SPECIFIC) ===== */
+.display-root .clock-display {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.display-root .date-display {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.display-root .section-title {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.display-root .countdown-primary {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.display-root .countdown-secondary {
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  opacity: 0.5;
+}
+
+
