@@ -75,66 +75,58 @@ OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü d
 
 ## Projeyi hazırlama
 
-```bash
-git clone <repo-adresi> okulpano
-cd okulpano
-npm install
-Ortam dosyasını oluşturma
+`git clone <repo-adresi> okulpano`  
+`cd okulpano`  
+`npm install`
+
+## Ortam dosyasını oluşturma
+
 Kullandığınız terminale göre aşağıdaki komutlardan birini çalıştırın.
 
-macOS / Linux / Git Bash
-cp .env.example .env
-Windows Komut İstemi (CMD)
-copy .env.example .env
-Windows PowerShell
-Copy-Item .env.example .env
-Veritabanını hazırlama
-Yerel geliştirme veritabanı dosyası prisma/dev.db yolunda oluşur.
+### macOS / Linux / Git Bash
 
-npm run db:push
-İsteğe bağlı örnek veri
-npm run db:seed
-Geliştirme ortamı
-npm run dev
+`cp .env.example .env`
+
+### Windows Komut İstemi (CMD)
+
+`copy .env.example .env`
+
+### Windows PowerShell
+
+`Copy-Item .env.example .env`
+
+## Veritabanını hazırlama
+
+Yerel geliştirme veritabanı dosyası `prisma/dev.db` yolunda oluşur.
+
+`npm run db:push`
+
+## İsteğe bağlı örnek veri
+
+`npm run db:seed`
+
+## Geliştirme ortamı
+
+`npm run dev`
+
 Ardından:
 
-Yönetim paneli: http://localhost:3000/admin/general
-Display ekranı: http://localhost:3000/display
-Üretim kurulumu
-Node.js ile
-npm install
-npm run db:push
-npm run build
-npm run start
-Docker ile
-docker compose up -d --build
+- Yönetim paneli: `http://localhost:3000/admin/general`
+- Display ekranı: `http://localhost:3000/display`
 
-## Önerilen kullanım
+## Üretim kurulumu
 
-* Yönetim paneli okul içi bilgisayarda çalıştırılmalıdır
-* Display ekranı televizyona HDMI ile verilmelidir
-* Tarayıcı tam ekran modunda açık bırakılmalıdır
-* Yerel ağ veya erişimi sınırlandırılmış kurulum önerilir
+### Node.js ile
 
-## Önemli çalışma notları
+`npm install`  
+`npm run db:push`  
+`npm run build`  
+`npm run start`
 
-* SQLite veritabanı dosyası ve `public/uploads` klasörü düzenli yedeklenmelidir
-* Yönetim paneli varsayılan olarak yerel kullanım hedeflenerek tasarlanmıştır
-* İnternet üzerinden açık erişim verilecek kurulumlarda ek kimlik doğrulama önerilir
-* Haber ve hava durumu modülleri internet bağlantısına bağlıdır
+### Docker ile
 
-## Kullanışlı komutlar
+`docker compose up -d --build`
 
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run typecheck
-npm run db:push
-npm run db:seed
-npm run db:studio
-```
 
 ## Lisans
 
