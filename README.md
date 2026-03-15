@@ -79,14 +79,16 @@ OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü d
 git clone <repo-adresi> okulpano
 cd okulpano
 npm install
+```
+
+### macOS / Linux / Git Bash
+
+```bash
 cp .env.example .env
-```
-
-### Windows PowerShell
-
-```powershell
+Windows Komut İstemi (CMD)
+copy .env.example .env
+Windows PowerShell
 Copy-Item .env.example .env
-```
 
 ### Veritabanını hazırlama
 
