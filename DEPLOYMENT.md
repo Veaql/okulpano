@@ -12,31 +12,35 @@ OkulPano için önerilen kullanım modeli:
 
 ## 2. Sunucu önerisi
 
-En sade kurulum için:
+En sade kurulum için önerilen kaynaklar:
 
-- 2 vCPU
-- 2 GB RAM
-- 10 GB disk
+- `2 vCPU`
+- `2 GB RAM`
+- `10 GB disk`
 
 SQLite kullandığı için küçük ve orta ölçekli okul kurulumlarında ek veritabanı sunucusu gerekmez.
 
 ## 3. Node.js ile üretim kurulumu
 
-```bash
-git clone <repo-adresi> okulpano
-cd okulpano
-npm install
-cp .env.example .env
-npm run db:push
-npm run build
-npm run start
-```
+`git clone <repo-adresi> okulpano`  
+`cd okulpano`  
+`npm install`  
+`cp .env.example .env`  
+`npm run db:push`  
+`npm run build`  
+`npm run start`
+
+Windows PowerShell kullanıyorsanız ortam dosyasını şu komutla oluşturun:
+
+`Copy-Item .env.example .env`
+
+Windows Komut İstemi (`CMD`) kullanıyorsanız:
+
+`copy .env.example .env`
 
 ## 4. Docker ile üretim kurulumu
 
-```bash
-docker compose up -d --build
-```
+`docker compose up -d --build`
 
 Docker kurulumu şu verileri kalıcı tutar:
 
@@ -49,7 +53,7 @@ Nginx veya Caddy ile aşağıdaki yapı önerilir:
 
 - `/admin/*` sadece okul içi ağdan erişilsin
 - `/display` TV ekranları için açık kalsın
-- HTTPS aktif olsun
+- `HTTPS` aktif olsun
 
 ## 6. Yedekleme
 
@@ -60,18 +64,14 @@ En az şu iki alan düzenli olarak yedeklenmelidir:
 
 ## 7. Güncelleme akışı
 
-```bash
-git pull
-npm install
-npm run db:push
-npm run build
-```
+`git pull`  
+`npm install`  
+`npm run db:push`  
+`npm run build`
 
 Docker kullanıyorsanız:
 
-```bash
-docker compose up -d --build
-```
+`docker compose up -d --build`
 
 ## 8. İnternet bağımlı modüller
 
@@ -84,18 +84,23 @@ Bu durumda display ekranında veri güncellenemedi uyarısı görünür.
 
 ## 9. Okul içi kullanım notu
 
-Kimlik doğrulama katmanı eklenmeden yönetim panelinin doğrudan genel internete açılması önerilmez. En güvenli kullanım modeli:
+Kimlik doğrulama katmanı eklenmeden yönetim panelinin doğrudan genel internete açılması önerilmez.
+
+En güvenli kullanım modeli:
 
 - okul içi ağ
 - VPN
-- veya IP kısıtlı reverse proxy
+- IP kısıtlı reverse proxy
 
 ## 10. Canlıya çıkmadan önce kontrol listesi
 
-- `npm run lint`
-- `npm run typecheck`
-- `npm run build`
-- `npm run db:push`
+`npm run lint`  
+`npm run typecheck`  
+`npm run build`  
+`npm run db:push`
+
+Ayrıca şu kontroller önerilir:
+
 - yükleme klasörü yazılabilir durumda mı
 - `/display` TV tarayıcısında tam ekran test edildi mi
 - TRT Haber ve hava durumu internet bağlantısıyla test edildi mi
