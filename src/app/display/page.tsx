@@ -34,7 +34,7 @@ const examDates = {
   lgs: new Date("2026-06-14T09:30:00+03:00"),
 } as const
 
-const PANEL_ROTATE_MS = 20000
+const PANEL_ROTATE_MS = 60000
 const DUTY_PAGE_SIZE = 5
 const ANNOUNCEMENT_PAGE_SIZE = 2
 const MEAL_PAGE_SIZE = 5
@@ -125,14 +125,6 @@ function getAnnouncementAccent(priority: string) {
   }
 
   return { line: "rgba(202, 169, 109, 0.42)", badgeBg: "rgba(255, 255, 255, 0.08)", badgeText: "#d6e1ef", label: "DUYURU" }
-}
-
-function getPagedItems<T>(items: T[], pageSize: number, cycle: number) {
-  if (items.length <= pageSize) return items
-  const totalPages = Math.ceil(items.length / pageSize)
-  const pageIndex = cycle % totalPages
-  const start = pageIndex * pageSize
-  return items.slice(start, start + pageSize)
 }
 
 function getDutyPriority(locationName: string) {
@@ -252,13 +244,18 @@ export default function DisplayPage() {
   const [connected, setConnected] = useState(true)
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
   const [mediaFadeKey, setMediaFadeKey] = useState(0)
-  const [panelCycle, setPanelCycle] = useState(0)
   const [weather, setWeather] = useState<WeatherState | null>(null)
   const [trtHeadlines, setTrtHeadlines] = useState<TrtHeadline[]>([])
   const [weatherUnavailable, setWeatherUnavailable] = useState(false)
   const [trtUnavailable, setTrtUnavailable] = useState(false)
   const [mebLogoIndex, setMebLogoIndex] = useState(0)
   const mediaTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dutyViewportRef = useRef<HTMLDivElement | null>(null)
+  const dutyContentRef = useRef<HTMLDivElement | null>(null)
+  const announcementViewportRef = useRef<HTMLDivElement | null>(null)
+  const announcementContentRef = useRef<HTMLDivElement | null>(null)
+  const mealViewportRef = useRef<HTMLDivElement | null>(null)
+  const mealContentRef = useRef<HTMLDivElement | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
@@ -372,25 +369,59 @@ export default function DisplayPage() {
   }, [data])
 
   useEffect(() => {
-    setPanelCycle(0)
-  }, [data, data?.dutyTeachers.length, data?.announcements.length, data?.settings.weatherLabel])
+    const pairs = [
+      [dutyViewportRef.current, dutyContentRef.current],
+      [announcementViewportRef.current, announcementContentRef.current],
+      [mealViewportRef.current, mealContentRef.current],
+    ].filter((pair): pair is [HTMLDivElement, HTMLDivElement] => Boolean(pair[0] && pair[1]))
 
-  useEffect(() => {
-    if (!data) return
+    if (pairs.length === 0) return
 
-    const maxPages = Math.max(
-      Math.ceil(data.dutyTeachers.length / DUTY_PAGE_SIZE),
-      Math.ceil(data.announcements.length / ANNOUNCEMENT_PAGE_SIZE),
-    )
+    let frame = 0
+    const cycleStart = performance.now()
 
-    if (maxPages <= 1) return
+    const animate = (timestamp: number) => {
+      const elapsed = (timestamp - cycleStart) % PANEL_ROTATE_MS
+      const progress = elapsed / PANEL_ROTATE_MS
 
-    const timer = window.setInterval(() => {
-      setPanelCycle((prev) => (prev + 1) % maxPages)
-    }, PANEL_ROTATE_MS)
+      pairs.forEach(([viewport, content]) => {
+        const extraOffset = content === dutyContentRef.current ? 14 : 0
+        const distance = Math.max(0, content.scrollHeight - viewport.clientHeight + extraOffset)
+        if (distance <= 8) {
+          content.style.transform = "translateY(0px)"
+          return
+        }
 
-    return () => window.clearInterval(timer)
-  }, [data, data?.dutyTeachers.length, data?.announcements.length, data?.settings.weatherLabel])
+        const isAnnouncement = content === announcementContentRef.current
+        let offset = 0
+        if (progress < 0.5) {
+          offset = 0
+        } else if (progress < (isAnnouncement ? 0.6166666667 : 0.5833333333)) {
+          const downSpan = isAnnouncement ? 0.1166666667 : 0.0833333333
+          offset = distance * ((progress - 0.5) / downSpan)
+        } else if (progress < (isAnnouncement ? 0.8833333333 : 0.9166666667)) {
+          offset = distance
+        } else {
+          const upStart = isAnnouncement ? 0.8833333333 : 0.9166666667
+          const upSpan = isAnnouncement ? 0.1166666667 : 0.0833333333
+          offset = distance * (1 - (progress - upStart) / upSpan)
+        }
+
+        content.style.transform = `translateY(${-offset}px)`
+      })
+
+      frame = window.requestAnimationFrame(animate)
+    }
+
+    frame = window.requestAnimationFrame(animate)
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      pairs.forEach(([, content]) => {
+        content.style.transform = "translateY(0px)"
+      })
+    }
+  }, [data?.dutyTeachers.length, data?.announcements.length, data?.settings.activeWidget, data?.settings.weatherLabel])
 
   const theme = useMemo(() => {
     const baseTheme = getTheme(data?.settings.theme || "resmi")
@@ -462,9 +493,6 @@ export default function DisplayPage() {
   })
   const examDaysRemaining = getDaysRemaining(examDate, now)
   const resolvedMenuItems = buildMenuItems(data.settings.weatherLabel)
-  const visibleMenuItems = getPagedItems(resolvedMenuItems, MEAL_PAGE_SIZE, panelCycle)
-  const visibleDutyTeachers = getPagedItems(sortedDutyTeachers, DUTY_PAGE_SIZE, panelCycle)
-  const visibleAnnouncements = getPagedItems(data.announcements, ANNOUNCEMENT_PAGE_SIZE, panelCycle)
   const widgetTitle = activeWidget === "meal" ? "Haftalık Yemek Listesi" : `${examName} Sayacı`
   const scheduleAccent = schedule.type === "lesson"
     ? "#6aa678"
@@ -485,18 +513,20 @@ export default function DisplayPage() {
   const renderWidgetContent = (compact = false) => {
     if (activeWidget === "meal") {
       return (
-        <div key={`meal-${panelCycle}-${visibleMenuItems.map((item) => item.name).join("-")}`} className="animate-panel-sync flex flex-1 flex-col justify-center pt-3">
-          <p className="mb-3 text-[14px] font-black uppercase tracking-[0.14em]" style={{ color: theme.colors.accent }}>{formatMenuDate(now)}</p>
-          <div className="space-y-2">
-            {visibleMenuItems.map((item) => (
-              <div key={item.name} className="flex items-center justify-between rounded-xl border border-white/5 px-3 py-2.5" style={{ background: "rgba(255, 255, 255, 0.03)" }}>
-                <div className="flex items-center gap-2.5">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
-                  <span className={`${compact ? "text-[13px]" : "text-[15px]"} font-bold text-white/92`}>{item.name}</span>
+        <div ref={mealViewportRef} className="flex flex-1 flex-col justify-start overflow-hidden pt-3 pr-1">
+          <div ref={mealContentRef}>
+            <p className="mb-3 text-[14px] font-black uppercase tracking-[0.14em]" style={{ color: theme.colors.accent }}>{formatMenuDate(now)}</p>
+            <div className="space-y-2">
+              {resolvedMenuItems.map((item) => (
+                <div key={item.name} className="flex items-center justify-between rounded-xl border border-white/5 px-3 py-2.5" style={{ background: "rgba(255, 255, 255, 0.03)" }}>
+                  <div className="flex items-center gap-2.5">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
+                    <span className={`${compact ? "text-[13px]" : "text-[15px]"} font-bold text-white/92`}>{item.name}</span>
                 </div>
                 <span className="text-[12px] font-semibold" style={{ color: theme.colors.textSecondary }}>{"Günlük"}</span>
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )
@@ -574,12 +604,12 @@ export default function DisplayPage() {
               <SectionHeading title="Bugünkü Nöbetçi Öğretmenler" />
             </div>
             <div className="flex flex-1 flex-col px-3 pb-3">
-              <div className="min-h-0 flex-1 overflow-hidden">
+              <div ref={dutyViewportRef} className="min-h-0 flex-1 overflow-hidden" style={{ maxHeight: 394 }}>
                 {sortedDutyTeachers.length === 0 ? (
                   <div className="flex items-center justify-center rounded-[10px] border border-white/6 bg-white/[0.04] px-3 py-6 text-center text-[14px] font-semibold uppercase tracking-[0.12em] text-white/35">{"Nöbet bilgisi girilmemiş"}</div>
                 ) : (
-                  <div key={`duty-${panelCycle}-${visibleDutyTeachers.map((item) => item.id).join("-")}`} className="animate-panel-sync space-y-2.5 pr-1">
-                    {visibleDutyTeachers.map((duty) => (
+                  <div ref={dutyContentRef} className="space-y-2.5 pr-1">
+                    {sortedDutyTeachers.map((duty) => (
                       <div key={duty.id} className="grid grid-cols-[96px_1fr] items-center gap-3 rounded-[10px] border px-3 py-3" style={{ borderColor: theme.colors.border, background: withAlpha(theme.colors.surfaceAlt, 0.72) }}>
                         <p className="break-words text-[14px] font-semibold uppercase leading-tight tracking-[0.01em] text-white">{duty.locationName}</p>
                         <p className="break-words text-[16px] font-semibold leading-tight text-white">{duty.personName}</p>
@@ -718,12 +748,12 @@ export default function DisplayPage() {
 
           <section className="flex flex-[2.8] flex-col overflow-hidden p-4" style={frameStyle}>
             <SectionHeading title="Duyurular ve Haberler" />
-            <div className="flex flex-1 flex-col pt-3">
+            <div ref={announcementViewportRef} className="flex flex-1 flex-col overflow-hidden pt-3">
               {data.announcements.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center text-center text-xs uppercase tracking-[0.14em] text-white/35">{"Henüz duyuru yok"}</div>
               ) : (
-                <div key={`announcement-${panelCycle}-${visibleAnnouncements.map((item) => item.id).join("-")}`} className="animate-panel-sync space-y-2.5 pr-1">
-                  {visibleAnnouncements.map((announcement) => {
+                <div ref={announcementContentRef} className="space-y-2.5 pr-1">
+                  {data.announcements.map((announcement) => {
                     const accent = getAnnouncementAccent(announcement.priority)
                     return (
                       <article key={announcement.id} className="rounded-[14px] border px-3 py-3.5" style={{ borderColor: theme.colors.border, background: `linear-gradient(180deg, ${withAlpha(theme.colors.surfaceAlt, 0.78)}, ${withAlpha(theme.colors.surface, 0.52)})`, boxShadow: `inset 3px 0 0 0 ${accent.line}` }}>

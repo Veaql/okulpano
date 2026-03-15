@@ -58,6 +58,26 @@
   animation: panel-sync-rise 1200ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   will-change: transform, opacity;
 }
+
+@keyframes panel-scroll-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(calc(var(--panel-scroll-distance, 0px) * -1));
+  }
+  75% {
+    transform: translateY(calc(var(--panel-scroll-distance, 0px) * -1));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-panel-scroll {
+  animation: panel-scroll-vertical var(--panel-scroll-duration, 20000ms) ease-in-out infinite;
+  will-change: transform;
+}
 /* ===== PANEL CONTENT FADE ===== */
 @keyframes panel-fade {
   from { opacity: 0; }
