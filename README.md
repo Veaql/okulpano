@@ -44,7 +44,7 @@ Ticari SaaS modeliyle değil; düşük bakım gerektiren, yerel ağ içinde çal
 * Ders saatleri ve kalan süre
 * Kayan yazı bandı
 * Hava durumu
-* TRT Haber haber alanı
+* TRT Haber alanı
 * Sağ alt modül: yemek listesi, YKS sayacı veya LGS sayacı
 
 ## Teknoloji yığını
@@ -59,67 +59,104 @@ Ticari SaaS modeliyle değil; düşük bakım gerektiren, yerel ağ içinde çal
 
 OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü dış veri kaynaklarından alınır.
 
-* Nöbetçi öğretmenler, duyurular, medya, ders saatleri, ticker ve yemek listesi: yönetim panelinden girilir
+* Nöbetçi öğretmenler, duyurular, medya, ders saatleri, ticker ve yemek listesi yönetim panelinden girilir
 * TRT Haber akışı RSS üzerinden alınır
 * Hava durumu verileri Open-Meteo servislerinden alınır
 * İl ve ilçe seçimi proje içine eklenmiş statik Türkiye ilçe listesi ile desteklenir
 
-Not: İnternet bağlantısı olmayan ortamlarda dış veri kullanan modüller güncellenmez; display ekranında veri güncellenemedi uyarısı gösterilir.
+**Not:** İnternet bağlantısı olmayan ortamlarda dış veri kullanan modüller güncellenmez; display ekranında veri güncellenemedi uyarısı gösterilir.
 
 ## Kurulum
 
-### Gereksinimler 
-* Node.js 20 veya uzeri 
-* npm 
+### Gereksinimler
 
-### Projeyi hazirlama
+* Node.js 20 veya üzeri
+* npm
 
-bash
+### Projeyi hazırlama
+
+```bash
 git clone <repo-adresi> okulpano
 cd okulpano
 npm install
 cp .env.example .env
+```
 
-Windows PowerShell:
+### Windows PowerShell
 
-powershell
+```powershell
 Copy-Item .env.example .env
+```
 
-### Veritabanini hazirlama 
+### Veritabanını hazırlama
 
-Yerel gelistirme veritabani dosyasi prisma/dev.db yolunda olusur.
+Yerel geliştirme veritabanı dosyası `prisma/dev.db` yolunda oluşur.
 
-bash
+```bash
 npm run db:push
+```
 
-Istege bagli ornek veri:
+### İsteğe bağlı örnek veri
 
-bash
+```bash
 npm run db:seed
+```
 
-### Gelistirme ortami
+### Geliştirme ortamı
 
-bash
+```bash
 npm run dev
+```
 
-Ardindan: 
-* Yonetim paneli: http://localhost:3000/admin/general 
-* Display ekrani: http://localhost:3000/display 
+Ardından:
 
-## Onerilen kullanim 
+* Yönetim paneli: `http://localhost:3000/admin/general`
+* Display ekranı: `http://localhost:3000/display`
 
-* Yonetim paneli okul ici bilgisayarda calistirilmalidir 
-* Display ekrani televizyona HDMI ile verilmelidir 
-* Tarayici tam ekran modunda acik birakilmalidir 
-* Yerel ag veya erisimi sinirlandirilmis kurulum onerilir 
+## Üretim kurulumu
 
-## Onemli calisma notlari 
+### Node.js ile
 
-* SQLite veritabani dosyasi ve public/uploads klasoru duzenli yedeklenmelidir 
-* Yonetim paneli varsayilan olarak yerel kullanim hedeflenerek tasarlanmistir 
-* Internet uzerinden acik erisim verilecek kurulumlarda ek kimlik dogrulama onerilir 
-* Haber ve hava durumu modulleri internet baglantisina baglidir 
+```bash
+npm install
+npm run db:push
+npm run build
+npm run start
+```
 
-## Lisans 
+### Docker ile
 
-Bu proje acik kaynak olarak MIT lisansi ile sunulmaktadir.
+```bash
+docker compose up -d --build
+```
+
+## Önerilen kullanım
+
+* Yönetim paneli okul içi bilgisayarda çalıştırılmalıdır
+* Display ekranı televizyona HDMI ile verilmelidir
+* Tarayıcı tam ekran modunda açık bırakılmalıdır
+* Yerel ağ veya erişimi sınırlandırılmış kurulum önerilir
+
+## Önemli çalışma notları
+
+* SQLite veritabanı dosyası ve `public/uploads` klasörü düzenli yedeklenmelidir
+* Yönetim paneli varsayılan olarak yerel kullanım hedeflenerek tasarlanmıştır
+* İnternet üzerinden açık erişim verilecek kurulumlarda ek kimlik doğrulama önerilir
+* Haber ve hava durumu modülleri internet bağlantısına bağlıdır
+
+## Kullanışlı komutlar
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run typecheck
+npm run db:push
+npm run db:seed
+npm run db:studio
+```
+
+## Lisans
+
+Bu proje açık kaynak olarak MIT lisansı ile sunulmaktadır.
