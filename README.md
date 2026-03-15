@@ -79,7 +79,8 @@ OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü d
 git clone <repo-adresi> okulpano
 cd okulpano
 npm install
-Ortam dosyasını kullandığınız terminale göre oluşturun.
+Ortam dosyasını oluşturma
+Kullandığınız terminale göre aşağıdaki komutlardan birini çalıştırın.
 
 macOS / Linux / Git Bash
 cp .env.example .env
@@ -95,28 +96,18 @@ npm run db:push
 npm run db:seed
 Geliştirme ortamı
 npm run dev
-
 Ardından:
 
-* Yönetim paneli: `http://localhost:3000/admin/general`
-* Display ekranı: `http://localhost:3000/display`
-
-## Üretim kurulumu
-
-### Node.js ile
-
-```bash
+Yönetim paneli: http://localhost:3000/admin/general
+Display ekranı: http://localhost:3000/display
+Üretim kurulumu
+Node.js ile
 npm install
 npm run db:push
 npm run build
 npm run start
-```
-
-### Docker ile
-
-```bash
+Docker ile
 docker compose up -d --build
-```
 
 ## Önerilen kullanım
 
