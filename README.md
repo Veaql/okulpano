@@ -127,6 +127,12 @@ Ardından:
 
 `docker compose up -d --build`
 
+## Kurulum Videosu
+
+OkulPano'nun kurulumunu adım adım görmek için videoyu izleyebilirsiniz.
+
+https://youtu.be/SQR7_0SGIZY
+
 
 ## Lisans
 
