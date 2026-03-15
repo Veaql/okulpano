@@ -73,42 +73,28 @@ OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü d
 * Node.js 20 veya üzeri
 * npm
 
-### Projeyi hazırlama
+## Projeyi hazırlama
 
 ```bash
 git clone <repo-adresi> okulpano
 cd okulpano
 npm install
-```
+Ortam dosyasını kullandığınız terminale göre oluşturun.
 
-### macOS / Linux / Git Bash
-
-```bash
+macOS / Linux / Git Bash
 cp .env.example .env
 Windows Komut İstemi (CMD)
 copy .env.example .env
 Windows PowerShell
 Copy-Item .env.example .env
+Veritabanını hazırlama
+Yerel geliştirme veritabanı dosyası prisma/dev.db yolunda oluşur.
 
-### Veritabanını hazırlama
-
-Yerel geliştirme veritabanı dosyası `prisma/dev.db` yolunda oluşur.
-
-```bash
 npm run db:push
-```
-
-### İsteğe bağlı örnek veri
-
-```bash
+İsteğe bağlı örnek veri
 npm run db:seed
-```
-
-### Geliştirme ortamı
-
-```bash
+Geliştirme ortamı
 npm run dev
-```
 
 Ardından:
 
