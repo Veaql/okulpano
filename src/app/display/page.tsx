@@ -7,6 +7,8 @@ import { getTheme, getThemeCSS } from "@/lib/themes"
 import { motion } from "@/lib/motion"
 import { getMgmCityByCode, toTurkishLabel } from "@/lib/mgm"
 
+const mebLogoCandidates = ["/logo/meb-logo.png", "/logo/logomeb.png"]
+
 interface WeatherState {
   cityName: string
   stationName: string
@@ -214,6 +216,36 @@ function WeatherGlyph({ icon }: { icon: string }) {
   return <svg viewBox="0 0 64 64" className="h-9 w-9"><circle cx="32" cy="32" r="10" fill="none" stroke={stroke} strokeWidth="3.5" /><path d="M32 8v8M32 48v8M8 32h8M48 32h8M15 15l6 6M43 43l6 6M15 49l6-6M43 21l6-6" fill="none" stroke={stroke} strokeWidth="3.5" strokeLinecap="round" /></svg>
 }
 
+function MebSeal() {
+  return (
+    <svg viewBox="0 0 128 128" className="h-[52px] w-[52px]" aria-label="MEB Amblemi" role="img">
+      <circle cx="64" cy="64" r="58" fill="none" stroke="#d1242f" strokeWidth="3.5" />
+      <circle cx="64" cy="64" r="45" fill="none" stroke="#d1242f" strokeWidth="2.5" />
+      <circle cx="64" cy="64" r="19" fill="none" stroke="#d1242f" strokeWidth="2.5" />
+      <path d="M52 72h24M56 67h16M58 48h12M64 38v9M50 75c4-6 10-9 14-9s10 3 14 9" fill="none" stroke="#d1242f" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M47 56c3 1 6 4 7 8M81 56c-3 1-6 4-7 8" fill="none" stroke="#d1242f" strokeWidth="2.4" strokeLinecap="round" />
+      {Array.from({ length: 16 }).map((_, index) => {
+        const angle = (index / 16) * Math.PI * 2 - Math.PI / 2
+        const x = 64 + Math.cos(angle) * 51
+        const y = 64 + Math.sin(angle) * 51
+        return <circle key={index} cx={x} cy={y} r="1.8" fill="#d1242f" />
+      })}
+    </svg>
+  )
+}
+
+function MebWordmark() {
+  return (
+    <div className="flex items-center gap-4">
+      <MebSeal />
+      <div className="leading-none text-[#d1242f]">
+        <p className="text-[24px] font-black uppercase tracking-[0.02em]">T.C. Millî Eğitim</p>
+        <p className="mt-1 text-[24px] font-black uppercase tracking-[0.02em]">Bakanlığı</p>
+      </div>
+    </div>
+  )
+}
+
 export default function DisplayPage() {
   const [data, setData] = useState<DisplayData | null>(null)
   const [now, setNow] = useState(new Date())
@@ -225,6 +257,7 @@ export default function DisplayPage() {
   const [trtHeadlines, setTrtHeadlines] = useState<TrtHeadline[]>([])
   const [weatherUnavailable, setWeatherUnavailable] = useState(false)
   const [trtUnavailable, setTrtUnavailable] = useState(false)
+  const [mebLogoIndex, setMebLogoIndex] = useState(0)
   const mediaTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchData = useCallback(async () => {
@@ -498,7 +531,25 @@ export default function DisplayPage() {
     >
       <header className="relative z-10 flex shrink-0 items-center px-7" style={{ height: 88, background: `linear-gradient(180deg, ${withAlpha(theme.colors.headerBg, 0.96)} 0%, ${withAlpha(theme.colors.primary, 0.88)} 100%)`, borderBottom: `1px solid ${theme.colors.border}` }}>
         <div className="flex w-[300px] shrink-0 items-center">
-          <img src="/uploads/23f35c85-af70-445d-9f91-085faadc3c78/logos/meblogo1.png" alt="MEB Logo" className="h-[50px] w-[248px] object-contain" />
+          <img
+            src={mebLogoCandidates[mebLogoIndex]}
+            alt="MEB Logo"
+            className="h-[58px] max-w-[280px] object-contain object-left"
+            onError={(event) => {
+              if (mebLogoIndex < mebLogoCandidates.length - 1) {
+                setMebLogoIndex((current) => current + 1)
+                return
+              }
+
+              const target = event.currentTarget
+              target.style.display = "none"
+              const fallback = target.nextElementSibling as HTMLDivElement | null
+              if (fallback) fallback.style.display = "block"
+            }}
+          />
+          <div className="origin-left scale-[0.78]" style={{ display: "none" }}>
+            <MebWordmark />
+          </div>
         </div>
         <div className="flex-1 px-6 text-center">
           <h1 className="text-[30px] font-black uppercase tracking-[0.05em] text-white">{data.school.name}</h1>
@@ -707,10 +758,5 @@ export default function DisplayPage() {
     </div>
   )
 }
-
-
-
-
-
 
 
