@@ -13,6 +13,8 @@
     accentColor: string
     cardRadius: string
     fontScale: string
+    backgroundPattern: string
+    displayFont: string
     dateFormat: string
     timeFormat: string
     showSeconds: boolean

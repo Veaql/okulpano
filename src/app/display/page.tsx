@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { DisplayData, ScheduleStatus } from "@/lib/types"
-import { getTheme, getThemeCSS } from "@/lib/themes"
+import { getBackgroundPattern, getDisplayBackground, getDisplayFont, getTheme, getThemeCSS } from "@/lib/themes"
 import { motion } from "@/lib/motion"
 import { getMgmCityByCode, toTurkishLabel } from "@/lib/mgm"
 
@@ -35,9 +35,6 @@ const examDates = {
 } as const
 
 const PANEL_ROTATE_MS = 60000
-const DUTY_PAGE_SIZE = 5
-const ANNOUNCEMENT_PAGE_SIZE = 2
-const MEAL_PAGE_SIZE = 5
 
 function getDatePart(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes) {
   return parts.find((part) => part.type === type)?.value ?? ""
@@ -438,10 +435,18 @@ export default function DisplayPage() {
       cardRadius: resolvedRadius,
       fontScale: Number.isFinite(resolvedFontScale) ? resolvedFontScale : baseTheme.fontScale,
     }
-  }, [data?.settings.accentColor, data?.settings.cardRadius, data?.settings.fontScale, data?.settings.primaryColor, data?.settings.theme])
+  }, [
+    data?.settings.accentColor,
+    data?.settings.cardRadius,
+    data?.settings.fontScale,
+    data?.settings.primaryColor,
+    data?.settings.theme,
+  ])
 
   const themeVars = getThemeCSS(theme)
   const motionVars = motion.toCSSVars()
+  const displayFont = getDisplayFont(data?.settings.displayFont || "system")
+  const backgroundPattern = getBackgroundPattern(data?.settings.backgroundPattern || "default-grid")
 
   if (!data) {
     return (
@@ -554,9 +559,9 @@ export default function DisplayPage() {
       style={{
         ...themeVars,
         ...motionVars,
-        background: `repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 14px, rgba(255, 255, 255, 0.01) 14px 28px), radial-gradient(circle at 50% 14%, ${withAlpha(theme.colors.primary, 0.34)} 0%, rgba(12, 24, 45, 0) 36%), radial-gradient(circle at 18% 24%, ${withAlpha(theme.colors.accent, 0.14)} 0%, rgba(12, 24, 45, 0) 28%), linear-gradient(180deg, ${theme.colors.background} 0%, ${theme.colors.primary} 100%)`,
+        background: getDisplayBackground(backgroundPattern.id, theme.colors.background, theme.colors.primary),
         color: theme.colors.text,
-        fontFamily: '"Segoe UI", Arial, sans-serif',
+        fontFamily: displayFont.stack,
       }}
     >
       <header className="relative z-10 flex shrink-0 items-center px-7" style={{ height: 88, background: `linear-gradient(180deg, ${withAlpha(theme.colors.headerBg, 0.96)} 0%, ${withAlpha(theme.colors.primary, 0.88)} 100%)`, borderBottom: `1px solid ${theme.colors.border}` }}>
@@ -702,7 +707,7 @@ export default function DisplayPage() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-1 items-center justify-between gap-4">
+              <div className="flex flex-1 items-center justify-between gap-5">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-1.5 rounded-full" style={{ background: scheduleAccent }} />
                   <div>
@@ -710,9 +715,16 @@ export default function DisplayPage() {
                     <p className="mt-1 text-[19px] font-black text-white">{schedule.currentBlock?.label}</p>
                   </div>
                 </div>
-                <div className="rounded-[16px] border px-6 py-2.5 text-center" style={{ borderColor: withAlpha(theme.colors.accent, 0.24), background: "linear-gradient(180deg, rgba(8, 16, 28, 0.82), rgba(6, 12, 22, 0.96))" }}>
-                  <p className="text-[12px] font-black uppercase tracking-[0.2em]" style={{ color: theme.colors.text }}>{"Kalan Süre"}</p>
-                  <p className="mt-1 text-[38px] font-black leading-none" style={{ color: scheduleAccent }}>{schedule.remainingMinutes}<span className="ml-1 text-[21px] opacity-80">:{schedule.remainingSeconds.toString().padStart(2, "0")}</span></p>
+                <div className="min-w-[204px] text-center">
+                  <p className="text-[11px] font-black uppercase tracking-[0.22em]" style={{ color: theme.colors.textSecondary }}>{"Kalan Süre"}</p>
+                  <div className="mt-1.5 flex items-end justify-center">
+                    <span
+                      className="text-[40px] font-black leading-none tracking-[-0.03em]"
+                      style={{ color: "#f4f7fb" }}
+                    >
+                      {schedule.remainingMinutes}:{schedule.remainingSeconds.toString().padStart(2, "0")}
+                    </span>
+                  </div>
                 </div>
                 {schedule.nextBlock ? (
                   <div className="text-right">

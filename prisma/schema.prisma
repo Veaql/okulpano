@@ -39,6 +39,8 @@ model Settings {
   accentColor     String   @default("#f59e0b") @map("accent_color")
   cardRadius      String   @default("12") @map("card_radius")
   fontScale       String   @default("100") @map("font_scale")
+  backgroundPattern String @default("default-grid") @map("background_pattern")
+  displayFont     String   @default("system") @map("display_font")
   dateFormat      String   @default("DD MMMM YYYY - dddd") @map("date_format")
   timeFormat      String   @default("HH:mm") @map("time_format")
   showSeconds     Boolean  @default(false) @map("show_seconds")

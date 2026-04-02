@@ -3,8 +3,24 @@ import { prisma } from "@/lib/prisma"
 
 export const runtime = "nodejs"
 
+async function ensureThemeColumns() {
+  const statements = [
+    `ALTER TABLE settings ADD COLUMN background_pattern TEXT DEFAULT 'default-grid'`,
+    `ALTER TABLE settings ADD COLUMN display_font TEXT DEFAULT 'system'`,
+  ]
+
+  for (const statement of statements) {
+    try {
+      await prisma.$executeRawUnsafe(statement)
+    } catch {
+      // SQLite duplicate column errors are safe to ignore here.
+    }
+  }
+}
+
 export async function GET() {
   try {
+    await ensureThemeColumns()
     const school = await prisma.school.findFirst({ include: { settings: true } })
 
     if (!school) {
@@ -49,8 +65,15 @@ export async function GET() {
     ])
 
     const settings = school.settings
-    const visibilityRows = await prisma.$queryRawUnsafe<Array<{ showWeather: number | boolean | null; showWidget: number | boolean | null }>>(
-      'SELECT show_weather AS showWeather, show_widget AS showWidget FROM settings WHERE school_id = ? LIMIT 1',
+    const visibilityRows = await prisma.$queryRawUnsafe<
+      Array<{
+        showWeather: number | boolean | null
+        showWidget: number | boolean | null
+        backgroundPattern: string | null
+        displayFont: string | null
+      }>
+    >(
+      'SELECT show_weather AS showWeather, show_widget AS showWidget, background_pattern AS backgroundPattern, display_font AS displayFont FROM settings WHERE school_id = ? LIMIT 1',
       school.id,
     )
     const visibility = visibilityRows[0]
@@ -70,6 +93,8 @@ export async function GET() {
         accentColor: settings?.accentColor ?? "#f59e0b",
         cardRadius: settings?.cardRadius ?? "12",
         fontScale: settings?.fontScale ?? "100",
+        backgroundPattern: visibility?.backgroundPattern ?? "default-grid",
+        displayFont: visibility?.displayFont ?? "system",
         dateFormat: settings?.dateFormat ?? "DD MMMM YYYY - dddd",
         timeFormat: settings?.timeFormat ?? "HH:mm",
         showSeconds: settings?.showSeconds ?? false,

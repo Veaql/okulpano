@@ -6,6 +6,16 @@ Uygulama; okul içinde sürekli açık kalan televizyonlar veya ekranlar üzerin
 
 Ticari SaaS modeliyle değil; düşük bakım gerektiren, yerel ağ içinde çalışabilen, kurulumu sade ve ücretsiz bir okul içi signage çözümü olarak geliştirilmiştir.
 
+## Son Güncellemeler
+
+- Display ekranı daha kurumsal ve daha sakin bir signage görünümüne taşındı.
+- Tema sistemine arka plan deseni, yeni renk paletleri ve farklı font seçenekleri eklendi.
+- Varsayılan görünüm korunarak yeni tema seçenekleri açıldı.
+- Hava durumu, TRT Haber ve sağ alt pano modülleri daha kararlı hale getirildi.
+- Kalan süre alanı ve panel geçişleri TV ekranında daha okunur olacak şekilde iyileştirildi.
+
+Detaylı sürüm geçmişi için [CHANGELOG.md](CHANGELOG.md) dosyasına bakabilirsiniz.
+
 ## Ekran Görüntüleri
 
 ### Display Ekranı
@@ -22,12 +32,12 @@ Ticari SaaS modeliyle değil; düşük bakım gerektiren, yerel ağ içinde çal
 
 ## Neden OkulPano?
 
-* Açık kaynak ve ücretsizdir
-* Yerel kullanım için tasarlanmıştır
-* Ek sunucu veya karmaşık servis bağımlılığı gerektirmez
-* Okul içi televizyon ekranlarında sürekli açık çalışabilir
-* Yönetim paneli ile içerikler hızlı şekilde güncellenebilir
-* Kurumsal, sade ve okunabilir bir ekran dili sunar
+- Açık kaynak ve ücretsizdir
+- Yerel kullanım için tasarlanmıştır
+- Ek sunucu veya karmaşık servis bağımlılığı gerektirmez
+- Okul içi televizyon ekranlarında sürekli açık çalışabilir
+- Yönetim paneli ile içerikler hızlı şekilde güncellenebilir
+- Kurumsal, sade ve okunabilir bir ekran dili sunar
 
 ## Temel kullanım modeli
 
@@ -38,31 +48,31 @@ Ticari SaaS modeliyle değil; düşük bakım gerektiren, yerel ağ içinde çal
 
 ## Öne çıkan modüller
 
-* Günün nöbetçi öğretmenleri
-* Duyurular
-* Medya alanı
-* Ders saatleri ve kalan süre
-* Kayan yazı bandı
-* Hava durumu
-* TRT Haber alanı
-* Sağ alt modül: yemek listesi, YKS sayacı veya LGS sayacı
+- Günün nöbetçi öğretmenleri
+- Duyurular
+- Medya alanı
+- Ders saatleri ve kalan süre
+- Kayan yazı bandı
+- Hava durumu
+- TRT Haber alanı
+- Sağ alt modül: yemek listesi, YKS sayacı veya LGS sayacı
 
 ## Teknoloji yığını
 
-* Next.js 16
-* React 19
-* Tailwind CSS 4
-* Prisma
-* SQLite
+- Next.js 16
+- React 19
+- Tailwind CSS 4
+- Prisma
+- SQLite
 
 ## Veri kaynakları
 
 OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü dış veri kaynaklarından alınır.
 
-* Nöbetçi öğretmenler, duyurular, medya, ders saatleri, ticker ve yemek listesi yönetim panelinden girilir
-* TRT Haber akışı RSS üzerinden alınır
-* Hava durumu verileri Open-Meteo servislerinden alınır
-* İl ve ilçe seçimi proje içine eklenmiş statik Türkiye ilçe listesi ile desteklenir
+- Nöbetçi öğretmenler, duyurular, medya, ders saatleri, ticker ve yemek listesi yönetim panelinden girilir
+- TRT Haber akışı RSS üzerinden alınır
+- Hava durumu verileri Open-Meteo servislerinden alınır
+- İl ve ilçe seçimi proje içine eklenmiş statik Türkiye ilçe listesi ile desteklenir
 
 **Not:** İnternet bağlantısı olmayan ortamlarda dış veri kullanan modüller güncellenmez; display ekranında veri güncellenemedi uyarısı gösterilir.
 
@@ -70,8 +80,8 @@ OkulPano içeriğinin bir bölümü yönetim panelinden girilir, bir bölümü d
 
 ### Gereksinimler
 
-* Node.js 20 veya üzeri
-* npm
+- Node.js 20 veya üzeri
+- npm
 
 ## Projeyi hazırlama
 
@@ -129,10 +139,9 @@ Ardından:
 
 ## Kurulum Videosu
 
-OkulPano'nun kurulumunu adım adım görmek için videoyu izleyebilirsiniz.
+OkulPano'nun kurulumunu adım adım görmek için videoyu izleyebilirsiniz:
 
-https://youtu.be/SQR7_0SGIZY
-
+[Kurulum Videosu](https://youtu.be/SQR7_0SGIZY)
 
 ## Lisans
 
