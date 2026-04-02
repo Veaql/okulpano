@@ -34,6 +34,8 @@ const prismaDefaultSettings = {
   accentColor: defaultSettings.accentColor,
   cardRadius: defaultSettings.cardRadius,
   fontScale: defaultSettings.fontScale,
+  backgroundPattern: defaultSettings.backgroundPattern,
+  displayFont: defaultSettings.displayFont,
   dateFormat: defaultSettings.dateFormat,
   timeFormat: defaultSettings.timeFormat,
   showSeconds: defaultSettings.showSeconds,
@@ -44,6 +46,8 @@ const prismaDefaultSettings = {
   examDate: defaultSettings.examDate,
   trtCategory: defaultSettings.trtCategory,
   showTrtNews: defaultSettings.showTrtNews,
+  showWeather: defaultSettings.showWeather,
+  showWidget: defaultSettings.showWidget,
   weatherCityCode: defaultSettings.weatherCityCode,
   weatherStation: defaultSettings.weatherStation,
   weatherLabel: defaultSettings.weatherLabel,
@@ -115,56 +119,11 @@ function sanitizeSettingsPatch(input: Record<string, unknown> | null | undefined
   return Object.keys(patch).length > 0 ? patch : null
 }
 
-async function readExtraSettings(schoolId: string) {
-  const rows = await prisma.$queryRawUnsafe<
-    Array<{
-      showWeather: number | boolean | null
-      showWidget: number | boolean | null
-      backgroundPattern: string | null
-      displayFont: string | null
-    }>
-  >(
-    'SELECT show_weather AS showWeather, show_widget AS showWidget, background_pattern AS backgroundPattern, display_font AS displayFont FROM settings WHERE school_id = ? LIMIT 1',
-    schoolId,
-  )
-
-  const row = rows[0]
-  return {
-    showWeather: row?.showWeather == null ? defaultSettings.showWeather : Boolean(row.showWeather),
-    showWidget: row?.showWidget == null ? defaultSettings.showWidget : Boolean(row.showWidget),
-    backgroundPattern: row?.backgroundPattern || defaultSettings.backgroundPattern,
-    displayFont: row?.displayFont || defaultSettings.displayFont,
-  }
-}
-
-async function ensureThemeColumns() {
-  const statements = [
-    `ALTER TABLE settings ADD COLUMN background_pattern TEXT DEFAULT 'default-grid'`,
-    `ALTER TABLE settings ADD COLUMN display_font TEXT DEFAULT 'system'`,
-  ]
-
-  for (const statement of statements) {
-    try {
-      await prisma.$executeRawUnsafe(statement)
-    } catch {
-      // SQLite duplicate column errors are safe to ignore here.
-    }
-  }
-}
-
 export async function GET() {
   try {
-    await ensureThemeColumns()
     const school = await prisma.school.findFirst({ include: { settings: true } })
     if (!school) {
       return NextResponse.json(fallbackPayload())
-    }
-
-    const extraSettings = school.settings ? await readExtraSettings(school.id) : {
-      showWeather: defaultSettings.showWeather,
-      showWidget: defaultSettings.showWidget,
-      backgroundPattern: defaultSettings.backgroundPattern,
-      displayFont: defaultSettings.displayFont,
     }
 
     return NextResponse.json({
@@ -173,7 +132,6 @@ export async function GET() {
         ? {
             ...defaultSettings,
             ...school.settings,
-            ...extraSettings,
             examDate: school.settings.examDate?.toISOString() ?? null,
           }
         : {
@@ -189,7 +147,6 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   try {
-    await ensureThemeColumns()
     const body = (await req.json()) as Record<string, unknown>
     const { name, shortName, city, district, slogan, logoUrl, timezone, settings } = body
 
@@ -226,44 +183,15 @@ export async function PUT(req: NextRequest) {
 
     const safeSettings = sanitizeSettingsPatch(settings as Record<string, unknown> | null | undefined)
     if (safeSettings) {
-      const {
-        showWeather,
-        showWidget,
-        backgroundPattern,
-        displayFont,
-        ...prismaSafeSettings
-      } = safeSettings as Record<string, unknown>
-
       await prisma.settings.upsert({
         where: { schoolId: school.id },
         create: {
           schoolId: school.id,
           ...prismaDefaultSettings,
-          ...prismaSafeSettings,
+          ...(safeSettings as Record<string, unknown>),
         },
-        update: prismaSafeSettings,
+        update: safeSettings as Record<string, unknown>,
       })
-
-      if (
-        typeof showWeather === "boolean" ||
-        typeof showWidget === "boolean" ||
-        typeof backgroundPattern === "string" ||
-        typeof displayFont === "string"
-      ) {
-        await prisma.$executeRawUnsafe(
-          `UPDATE settings
-           SET show_weather = COALESCE(?, show_weather),
-               show_widget = COALESCE(?, show_widget),
-               background_pattern = COALESCE(?, background_pattern),
-               display_font = COALESCE(?, display_font)
-           WHERE school_id = ?`,
-          typeof showWeather === "boolean" ? (showWeather ? 1 : 0) : null,
-          typeof showWidget === "boolean" ? (showWidget ? 1 : 0) : null,
-          typeof backgroundPattern === "string" ? backgroundPattern : null,
-          typeof displayFont === "string" ? displayFont : null,
-          school.id,
-        )
-      }
     }
 
     return NextResponse.json({ success: true, schoolId: school.id })
