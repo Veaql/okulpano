@@ -109,6 +109,8 @@ Kullandığınız terminale göre aşağıdaki komutlardan birini çalıştırı
 
 Yerel geliştirme veritabanı dosyası `prisma/dev.db` yolunda oluşur.
 
+`.env` içindeki `DATABASE_URL` değeri `file:./dev.db` olmalıdır.
+
 `npm run db:push`
 
 ## İsteğe bağlı örnek veri

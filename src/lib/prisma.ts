@@ -2,15 +2,21 @@ import path from "path"
 import { PrismaClient } from "@prisma/client"
 
 function normalizeSqliteUrl(url?: string) {
-  const fallbackPath = path.resolve(process.cwd(), "prisma", "dev.db").replace(/\\/g, "/")
+  const prismaDir = path.resolve(process.cwd(), "prisma")
+  const fallbackPath = path.join(prismaDir, "dev.db").replace(/\\/g, "/")
 
   if (!url) {
     return `file:${fallbackPath}`
   }
 
-  if (url.startsWith("file:./")) {
+  if (url.startsWith("file:./") || url.startsWith("file:")) {
     const relativePath = url.slice("file:".length)
-    const resolvedPath = path.resolve(process.cwd(), relativePath).replace(/\\/g, "/")
+    if (!relativePath || path.isAbsolute(relativePath)) {
+      return url
+    }
+
+    const normalizedRelativePath = relativePath.replace(/^\.\/+/, "")
+    const resolvedPath = path.resolve(prismaDir, normalizedRelativePath).replace(/\\/g, "/")
     return `file:${resolvedPath}`
   }
 
