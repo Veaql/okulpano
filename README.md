@@ -147,4 +147,4 @@ OkulPano'nun kurulumunu adım adım görmek için videoyu izleyebilirsiniz:
 
 ## Lisans
 
-Bu proje açık kaynak olarak MIT lisansı ile sunulmaktadır.
+Bu proje açık kaynak olarak Apache 2.0 lisansı ile sunulmaktadır.
