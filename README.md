@@ -145,6 +145,14 @@ OkulPano'nun kurulumunu adım adım görmek için videoyu izleyebilirsiniz:
 
 [Kurulum Videosu](https://youtu.be/SQR7_0SGIZY)
 
+## İletişim & Kurulum Yardımı
+
+OkulPano Installer sürümü; otomatik kurulum, merkezi yönetim paneli, TV ekran yayını, duyuru sistemi ve yerel ağ desteğiyle kullanıma hazırdır.
+
+Hazır otonom sürüme erişmek için bizimle iletişime geçin:
+
+okulpano@proton.me
+
 ## Lisans
 
 Bu proje açık kaynak olarak Apache 2.0 lisansı ile sunulmaktadır.
