@@ -6,6 +6,8 @@ Uygulama; okul içinde sürekli açık kalan televizyonlar veya ekranlar üzerin
 
 Ticari SaaS modeliyle değil; düşük bakım gerektiren, yerel ağ içinde çalışabilen, kurulumu sade ve ücretsiz bir okul içi signage çözümü olarak geliştirilmiştir.
 
+OkulPano İnstaller sürümü: https://github.com/Veaql/okulpano-installer
+
 ## Son Güncellemeler
 
 - Display ekranı daha kurumsal ve daha sakin bir signage görünümüne taşındı.
